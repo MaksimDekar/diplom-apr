@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -16,15 +15,14 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const errorParam = searchParams.get("error")
+    const errorParam = new URLSearchParams(window.location.search).get("error")
 
     if (errorParam === "access_denied") {
       setError("У этого аккаунта нет доступа к админ-панели. Войдите под администратором.")
     }
-  }, [searchParams])
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
