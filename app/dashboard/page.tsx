@@ -183,9 +183,12 @@ export default async function DashboardPage() {
                                             {stages.map((stage: {
                                                 id: string; title: string; status: "pending" | "in_progress" | "completed"
                                                 completed_at: string | null
-                                                stage_media: { id: string; file_url: string; file_type: string; caption: string | null }[]
+                                                stage_media: { id: string; file_url: string; file_type: string; caption: string | null; created_at: string }[]
                                             }) => {
-                                                const stageMedia = stage.stage_media || []
+                                                const stageMedia = [...(stage.stage_media || [])].sort(
+                                                    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                                                )
+                                                const latestStageUpdate = stageMedia[0]
                                                 return (
                                                     <div key={stage.id} className={`rounded-lg border p-4 ${stage.status === "in_progress" ? "border-primary/50 bg-primary/5" :
                                                             stage.status === "completed" ? "border-green-500/30 bg-green-500/5" :
@@ -201,13 +204,18 @@ export default async function DashboardPage() {
                                                                 <span className="text-xs text-muted-foreground">· {new Date(stage.completed_at).toLocaleDateString("ru-RU")}</span>
                                                             )}
                                                             {stageMedia.length > 0 && (
-                                                                <Badge variant="secondary" className="ml-auto text-xs">{stageMedia.length} фото</Badge>
+                                                                <Badge variant="secondary" className="ml-auto text-xs">{stageMedia.length} материалов</Badge>
                                                             )}
                                                         </div>
+                                                        {latestStageUpdate && (
+                                                            <p className="mt-2 text-xs text-muted-foreground">
+                                                                Последнее обновление: {new Date(latestStageUpdate.created_at).toLocaleString("ru-RU")}
+                                                            </p>
+                                                        )}
                                                         {stageMedia.length > 0 && (
-                                                            <div className="grid grid-cols-4 gap-2 mt-3">
+                                                            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                                                                 {stageMedia.map((file) => (
-                                                                    <div key={file.id}>
+                                                                    <div key={file.id} className="space-y-1">
                                                                         {file.file_type === "photo" ? (
                                                                             <a href={file.file_url} target="_blank" rel="noopener noreferrer">
                                                                                 <div className="relative">
@@ -222,6 +230,7 @@ export default async function DashboardPage() {
                                                                                 </div>
                                                                             </a>
                                                                         )}
+                                                                        {file.caption && <p className="text-xs text-muted-foreground">{file.caption}</p>}
                                                                     </div>
                                                                 ))}
                                                             </div>

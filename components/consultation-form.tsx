@@ -37,7 +37,9 @@ export function ConsultationForm() {
         data: { user },
       } = await supabase.auth.getUser()
 
-      const { error: insertError } = await supabase.from("consultation_requests").insert([{ ...data, user_id: user?.id ?? null }])
+      const { error: insertError } = await supabase
+        .from("consultation_requests")
+        .insert([{ ...data, user_id: user?.id ?? null }])
 
       if (insertError) throw insertError
 
@@ -60,7 +62,7 @@ export function ConsultationForm() {
         <Input id="cons_full_name" name="full_name" placeholder="Иван Иванов" required disabled={isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="cons_phone">
             Телефон <span className="text-destructive">*</span>
@@ -73,7 +75,7 @@ export function ConsultationForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="property_type">Тип объекта</Label>
           <Input id="property_type" name="property_type" placeholder="Квартира, офис..." disabled={isLoading} />
@@ -84,7 +86,7 @@ export function ConsultationForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="preferred_date">Предпочтительная дата</Label>
           <Input id="preferred_date" name="preferred_date" type="date" disabled={isLoading} />
@@ -107,13 +109,13 @@ export function ConsultationForm() {
       </div>
 
       {error && (
-        <div className="p-4 bg-destructive/10 text-destructive text-sm rounded-lg border border-destructive/20">
+        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {isSuccess && (
-        <div className="p-4 bg-green-500/10 text-green-700 dark:text-green-400 text-sm rounded-lg border border-green-500/20">
+        <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400">
           Спасибо! Заявка на консультацию отправлена. Мы свяжемся с вами в указанное время.
         </div>
       )}
@@ -129,7 +131,7 @@ export function ConsultationForm() {
         )}
       </Button>
 
-      <p className="text-xs text-muted-foreground text-center">
+      <p className="text-center text-xs text-muted-foreground">
         Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
       </p>
     </form>

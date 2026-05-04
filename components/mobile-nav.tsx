@@ -29,25 +29,28 @@ export function MobileNav() {
           </div>
 
           <nav className="flex flex-col gap-2">
-            <Link href="/services" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
+            <Link href="/services" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               Услуги
             </Link>
-            <Link href="/portfolio" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
+            <Link href="/portfolio" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               Портфолио
             </Link>
-            <Link href="/about" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
+            <Link href="/about" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               О компании
             </Link>
-            <Link href="/reviews" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
+            <Link href="/reviews" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               Отзывы
             </Link>
-            <Link href="/contacts" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
+            <Link href="/contacts" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               Контакты
             </Link>
           </nav>
 
-          <div className="pt-6 border-t">
-            <a href="tel:+79050943216" className="flex items-center gap-2 text-base font-semibold hover:text-primary transition-colors mb-4">
+          <div className="border-t pt-6">
+            <a
+              href="tel:+79050943216"
+              className="mb-4 flex items-center gap-2 text-base font-semibold transition-colors hover:text-primary"
+            >
               <Phone className="h-5 w-5" />
               +7 (905) 094-32-16
             </a>

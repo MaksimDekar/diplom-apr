@@ -55,7 +55,7 @@ export function ContactForm() {
         <Input id="full_name" name="full_name" placeholder="Иван Иванов" required disabled={isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="email">
             Email <span className="text-destructive">*</span>
@@ -116,13 +116,13 @@ export function ContactForm() {
       </div>
 
       {error && (
-        <div className="p-4 bg-destructive/10 text-destructive text-sm rounded-lg border border-destructive/20">
+        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {isSuccess && (
-        <div className="p-4 bg-green-500/10 text-green-700 dark:text-green-400 text-sm rounded-lg border border-green-500/20">
+        <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-700 dark:text-green-400">
           Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.
         </div>
       )}
@@ -138,7 +138,7 @@ export function ContactForm() {
         )}
       </Button>
 
-      <p className="text-xs text-muted-foreground text-center">
+      <p className="text-center text-xs text-muted-foreground">
         Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
       </p>
     </form>
