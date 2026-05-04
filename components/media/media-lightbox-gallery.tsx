@@ -2,20 +2,34 @@
 
 import { useMemo, useState } from "react"
 import * as Dialog from "@radix-ui/react-dialog"
-import { ChevronLeft, ChevronRight, Image as ImageIcon, Video, X } from "lucide-react"
+import { ChevronLeft, ChevronRight, Image as ImageIcon, Loader2, Trash2, Video, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 type MediaItem = {
   id: string
   file_url: string
   file_type: string
   caption: string | null
+  created_at?: string
 }
 
-type ProjectMediaGalleryProps = {
+type MediaLightboxGalleryProps = {
   items: MediaItem[]
+  gridClassName?: string
+  thumbnailClassName?: string
+  onDelete?: (item: MediaItem) => void
+  deletingId?: string | null
+  showMeta?: boolean
 }
 
-export function ProjectMediaGallery({ items }: ProjectMediaGalleryProps) {
+export function MediaLightboxGallery({
+  items,
+  gridClassName = "mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4",
+  thumbnailClassName = "h-20",
+  onDelete,
+  deletingId,
+  showMeta = true,
+}: MediaLightboxGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
   const selectedItem = useMemo(() => {
@@ -42,32 +56,66 @@ export function ProjectMediaGallery({ items }: ProjectMediaGalleryProps) {
 
   return (
     <>
-      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className={gridClassName}>
         {items.map((file, index) => (
-          <button
-            key={file.id}
-            type="button"
-            onClick={() => openItem(index)}
-            className="space-y-1 text-left"
-          >
-            {file.file_type === "photo" ? (
-              <div className="relative overflow-hidden rounded-lg">
-                <img
-                  src={file.file_url}
-                  alt={file.caption || ""}
-                  className="h-20 w-full object-cover transition-transform hover:scale-[1.02]"
-                />
-                <div className="absolute top-1 left-1">
-                  <ImageIcon className="h-3 w-3 text-white drop-shadow" />
+          <div key={file.id} className="space-y-2">
+            <button
+              type="button"
+              onClick={() => openItem(index)}
+              className="block w-full text-left"
+            >
+              {file.file_type === "photo" ? (
+                <div className="relative overflow-hidden rounded-lg">
+                  <img
+                    src={file.file_url}
+                    alt={file.caption || ""}
+                    className={`${thumbnailClassName} w-full object-cover transition-transform hover:scale-[1.02]`}
+                  />
+                  <div className="absolute top-1 left-1">
+                    <ImageIcon className="h-3 w-3 text-white drop-shadow" />
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="flex h-20 w-full items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/80">
-                <Video className="h-6 w-6 text-muted-foreground" />
+              ) : (
+                <div className={`${thumbnailClassName} flex w-full items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/80`}>
+                  <Video className="h-6 w-6 text-muted-foreground" />
+                </div>
+              )}
+            </button>
+
+            {showMeta && (
+              <div className="space-y-1">
+                {file.caption && <p className="text-xs text-muted-foreground">{file.caption}</p>}
+                {file.created_at && (
+                  <p className="text-[11px] text-muted-foreground">
+                    {new Date(file.created_at).toLocaleString("ru-RU")}
+                  </p>
+                )}
               </div>
             )}
-            {file.caption && <p className="text-xs text-muted-foreground">{file.caption}</p>}
-          </button>
+
+            {onDelete && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full"
+                disabled={deletingId === file.id}
+                onClick={() => onDelete(file)}
+              >
+                {deletingId === file.id ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Удаление...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Удалить
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         ))}
       </div>
 
@@ -125,9 +173,14 @@ export function ProjectMediaGallery({ items }: ProjectMediaGalleryProps) {
                   )}
                 </div>
 
-                {selectedItem.caption && (
-                  <div className="mt-3 rounded-xl bg-black/60 px-4 py-3 text-sm text-white">
-                    {selectedItem.caption}
+                {(selectedItem.caption || selectedItem.created_at) && (
+                  <div className="mt-3 space-y-1 rounded-xl bg-black/60 px-4 py-3 text-sm text-white">
+                    {selectedItem.caption && <div>{selectedItem.caption}</div>}
+                    {selectedItem.created_at && (
+                      <div className="text-xs text-white/75">
+                        {new Date(selectedItem.created_at).toLocaleString("ru-RU")}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

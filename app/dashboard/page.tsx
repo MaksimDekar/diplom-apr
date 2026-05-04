@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { LogoutButton } from "@/components/logout-button"
 import { EditProfileForm } from "@/components/edit-profile-form"
-import { ProjectMediaGallery } from "@/components/dashboard/project-media-gallery"
+import { MediaLightboxGallery } from "@/components/media/media-lightbox-gallery"
 import {
     CheckCircle, Clock, Circle,
     Phone, Mail, MessageSquare, CalendarDays, HardHat, Shield
@@ -223,7 +223,9 @@ export default async function DashboardPage() {
                                                                 Последнее обновление: {new Date(latestStageUpdate.created_at).toLocaleString("ru-RU")}
                                                             </p>
                                                         )}
-                                                        {stageMedia.length > 0 && <ProjectMediaGallery items={stageMedia} />}
+                                                        {stageMedia.length > 0 && (
+                                                            <MediaLightboxGallery items={stageMedia} showMeta />
+                                                        )}
                                                     </div>
                                                 )
                                             })}

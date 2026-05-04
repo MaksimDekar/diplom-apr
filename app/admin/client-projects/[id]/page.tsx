@@ -6,6 +6,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { AdminNav } from "@/components/admin/admin-nav"
 import { DeleteClientProjectButton } from "@/components/admin/delete-client-project-button"
+import { MediaLightboxGallery } from "@/components/media/media-lightbox-gallery"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Loader2, CheckCircle, Clock, Circle, Image, Video } from "lucide-react"
+import { ArrowLeft, CheckCircle, Circle, Clock, Loader2 } from "lucide-react"
 
 type Stage = {
   id: string
@@ -60,6 +61,7 @@ export default function ClientProjectDetailPage() {
   const [selectedStage, setSelectedStage] = useState<string>("")
   const [caption, setCaption] = useState("")
   const [uploading, setUploading] = useState(false)
+  const [deletingMediaId, setDeletingMediaId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
@@ -175,6 +177,31 @@ export default function ClientProjectDetailPage() {
     }
   }
 
+  const handleDeleteMedia = async (mediaId: string) => {
+    const confirmed = window.confirm("Удалить этот файл? Он исчезнет и у клиента, и в админке.")
+    if (!confirmed) return
+
+    setDeletingMediaId(mediaId)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/admin/stage-media/${mediaId}`, {
+        method: "DELETE",
+      })
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(data?.error || "Не удалось удалить файл")
+      }
+
+      await loadData()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось удалить файл")
+    } finally {
+      setDeletingMediaId(null)
+    }
+  }
+
   if (isPageLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -218,6 +245,10 @@ export default function ClientProjectDetailPage() {
       .filter((item) => item.stage_id === stageId)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
+  const completedStages = stages.filter((stage) => stage.status === "completed").length
+  const inProgressStages = stages.filter((stage) => stage.status === "in_progress").length
+  const totalFiles = media.length
+
   return (
     <div className="flex min-h-screen">
       <AdminNav />
@@ -253,6 +284,33 @@ export default function ClientProjectDetailPage() {
               projectTitle={project.title}
               redirectTo="/admin/client-projects"
             />
+          </div>
+
+          <div className="mb-6 grid gap-4 md:grid-cols-4">
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="text-2xl font-bold">{stages.length}</div>
+                <p className="mt-1 text-xs text-muted-foreground">Всего этапов</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="text-2xl font-bold text-green-600">{completedStages}</div>
+                <p className="mt-1 text-xs text-muted-foreground">Завершено</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="text-2xl font-bold text-primary">{inProgressStages}</div>
+                <p className="mt-1 text-xs text-muted-foreground">В работе</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-5 pb-4">
+                <div className="text-2xl font-bold">{totalFiles}</div>
+                <p className="mt-1 text-xs text-muted-foreground">Загружено файлов</p>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -333,7 +391,8 @@ export default function ClientProjectDetailPage() {
                   </div>
 
                   <p className="text-xs text-muted-foreground">
-                    После первой загрузки по этапу он автоматически перейдёт в статус «В работе», а клиент сразу увидит обновление в личном кабинете.
+                    После первой загрузки по этапу он автоматически перейдёт в статус «В работе»,
+                    а клиент сразу увидит обновление в личном кабинете.
                   </p>
 
                   {uploading && (
@@ -361,39 +420,14 @@ export default function ClientProjectDetailPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {stageFiles.map((file) => (
-                          <div key={file.id} className="rounded-lg border p-2">
-                            {file.file_type === "photo" ? (
-                              <a href={file.file_url} target="_blank" rel="noopener noreferrer">
-                                <div className="relative">
-                                  <img
-                                    src={file.file_url}
-                                    alt={file.caption || stage.title}
-                                    className="h-24 w-full rounded-lg object-cover transition-opacity hover:opacity-90"
-                                  />
-                                  <div className="absolute left-1 top-1">
-                                    <Image className="h-3 w-3 text-white drop-shadow" />
-                                  </div>
-                                </div>
-                              </a>
-                            ) : (
-                              <a href={file.file_url} target="_blank" rel="noopener noreferrer">
-                                <div className="flex h-24 w-full items-center justify-center rounded-lg bg-muted transition-colors hover:bg-muted/80">
-                                  <Video className="h-8 w-8 text-muted-foreground" />
-                                </div>
-                              </a>
-                            )}
-
-                            <div className="mt-2 space-y-1">
-                              {file.caption && <p className="text-xs text-muted-foreground">{file.caption}</p>}
-                              <p className="text-[11px] text-muted-foreground">
-                                {new Date(file.created_at).toLocaleString("ru-RU")}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      <MediaLightboxGallery
+                        items={stageFiles}
+                        gridClassName="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                        thumbnailClassName="h-24"
+                        showMeta
+                        onDelete={(file) => handleDeleteMedia(file.id)}
+                        deletingId={deletingMediaId}
+                      />
                     </CardContent>
                   </Card>
                 )
