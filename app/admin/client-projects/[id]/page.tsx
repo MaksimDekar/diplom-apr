@@ -53,6 +53,7 @@ export default function ClientProjectDetailPage() {
   const projectId = params.id as string
 
   const [project, setProject] = useState<Project | null>(null)
+  const [isPageLoading, setIsPageLoading] = useState(true)
   const [stages, setStages] = useState<Stage[]>([])
   const [media, setMedia] = useState<Media[]>([])
   const [selectedStage, setSelectedStage] = useState<string>("")
@@ -62,32 +63,29 @@ export default function ClientProjectDetailPage() {
   const [success, setSuccess] = useState(false)
 
   const loadData = useCallback(async () => {
-    const supabase = createClient()
+    setIsPageLoading(true)
 
-    const { data: projectData } = await supabase
-      .from("client_projects")
-      .select("*, profiles(full_name, email)")
-      .eq("id", projectId)
-      .single()
+    try {
+      const response = await fetch(`/api/admin/client-projects/${projectId}`, {
+        cache: "no-store",
+      })
+      const data = await response.json()
 
-    const { data: stagesData } = await supabase
-      .from("project_stages")
-      .select("*")
-      .eq("project_id", projectId)
-      .order("order_index")
+      if (!response.ok) {
+        throw new Error(data?.error || "Не удалось загрузить проект")
+      }
 
-    const { data: mediaData } = await supabase
-      .from("stage_media")
-      .select("*")
-      .eq("project_id", projectId)
-      .order("created_at", { ascending: false })
+      setProject(data.project || null)
+      setStages(data.stages || [])
+      setMedia(data.media || [])
 
-    setProject(projectData)
-    setStages(stagesData || [])
-    setMedia(mediaData || [])
-
-    if (stagesData && stagesData.length > 0 && !selectedStage) {
-      setSelectedStage(stagesData[0].id)
+      if (data.stages && data.stages.length > 0 && !selectedStage) {
+        setSelectedStage(data.stages[0].id)
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Не удалось загрузить проект")
+    } finally {
+      setIsPageLoading(false)
     }
   }, [projectId, selectedStage])
 
@@ -176,10 +174,40 @@ export default function ClientProjectDetailPage() {
     }
   }
 
-  if (!project) {
+  if (isPageLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (!project) {
+    return (
+      <div className="flex min-h-screen">
+        <AdminNav />
+        <main className="ml-64 flex-1 p-8">
+          <div className="mx-auto max-w-3xl">
+            <Card>
+              <CardHeader>
+                <CardTitle>Не удалось открыть проект</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  {error || "Проект не найден или недоступен для просмотра."}
+                </p>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={() => loadData()}>
+                    Повторить
+                  </Button>
+                  <Button asChild>
+                    <Link href="/admin/client-projects">К списку проектов</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
       </div>
     )
   }
