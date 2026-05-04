@@ -8,7 +8,7 @@ import { LogoutButton } from "@/components/logout-button"
 import { EditProfileForm } from "@/components/edit-profile-form"
 import {
     CheckCircle, Clock, Circle, Image as ImageIcon, Video,
-    Phone, Mail, MessageSquare, CalendarDays, HardHat
+    Phone, Mail, MessageSquare, CalendarDays, HardHat, Shield
 } from "lucide-react"
 
 const projectStatusMap: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
@@ -66,6 +66,16 @@ export default async function DashboardPage() {
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold">Личный кабинет</h1>
                     <p className="text-muted-foreground mt-1">Добро пожаловать, {profile?.full_name || user.email}</p>
+                    {profile?.role === "admin" && (
+                        <div className="mt-4">
+                            <Button asChild variant="outline" size="sm">
+                                <Link href="/admin">
+                                    <Shield className="mr-2 h-4 w-4" />
+                                    Перейти в админ-панель
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Профиль */}

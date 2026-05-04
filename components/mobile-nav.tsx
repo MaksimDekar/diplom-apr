@@ -4,9 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Phone } from "lucide-react"
+import { Menu, Phone, Shield } from "lucide-react"
 
-export function MobileNav() {
+type MobileNavProps = {
+  isAdmin?: boolean
+}
+
+export function MobileNav({ isAdmin = false }: MobileNavProps) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -44,6 +48,14 @@ export function MobileNav() {
             <Link href="/contacts" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
               Контакты
             </Link>
+            {isAdmin && (
+              <Link href="/admin" className="py-2 text-base font-medium transition-colors hover:text-primary" onClick={() => setOpen(false)}>
+                <span className="inline-flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Админ-панель
+                </span>
+              </Link>
+            )}
           </nav>
 
           <div className="border-t pt-6">
