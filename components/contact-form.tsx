@@ -36,57 +36,24 @@ export function ContactForm() {
 
       if (insertError) throw insertError
 
-      // 🔴 ОТПРАВКА В TELEGRAM - НАЧАЛО
-      try {
-        const telegramResponse = await fetch('/api/telegram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            formType: 'contact',
-            name: data.full_name,
-            phone: data.phone,
-            email: data.email,
-            service_type: data.service_type,
-            message: data.message,
-            budget: data.budget_range,
-          }),
-        })
-
-        const telegramResult = await telegramResponse.json()
-        
-        if (!telegramResponse.ok) {
-          console.error('Ошибка отправки в Telegram:', telegramResult.error)
-          // Можно залогировать ошибку, но не показывать пользователю
-        } else {
-          console.log('✅ Уведомление отправлено в Telegram')
-        }
-      } catch (telegramError) {
-        console.error('Ошибка при отправке в Telegram:', telegramError)
-        // Продолжаем выполнение даже при ошибке Telegram
-      }
-      // 🔴 ОТПРАВКА В TELEGRAM - КОНЕЦ
-
       setIsSuccess(true)
       ;(e.target as HTMLFormElement).reset()
 
       setTimeout(() => setIsSuccess(false), 5000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Произошла ошибка при отправке формы")
+      setError(err instanceof Error ? err.message : "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РѕС‚РїСЂР°РІРєРµ С„РѕСЂРјС‹")
     } finally {
       setIsLoading(false)
     }
   }
 
-  // 🔴 ВАЖНО: Создайте API endpoint для Telegram
-  // Создайте файл: app/api/telegram/route.ts
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="full_name">
-          Ваше имя <span className="text-destructive">*</span>
+          Р’Р°С€Рµ РёРјСЏ <span className="text-destructive">*</span>
         </Label>
-        <Input id="full_name" name="full_name" placeholder="Иван Иванов" required disabled={isLoading} />
+        <Input id="full_name" name="full_name" placeholder="РРІР°РЅ РРІР°РЅРѕРІ" required disabled={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -99,50 +66,50 @@ export function ContactForm() {
 
         <div className="space-y-2">
           <Label htmlFor="phone">
-            Телефон <span className="text-destructive">*</span>
+            РўРµР»РµС„РѕРЅ <span className="text-destructive">*</span>
           </Label>
           <Input id="phone" name="phone" type="tel" placeholder="+7 (999) 123-45-67" required disabled={isLoading} />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="service_type">Интересующая услуга</Label>
+        <Label htmlFor="service_type">РРЅС‚РµСЂРµСЃСѓСЋС‰Р°СЏ СѓСЃР»СѓРіР°</Label>
         <Select name="service_type" disabled={isLoading}>
           <SelectTrigger>
-            <SelectValue placeholder="Выберите услугу" />
+            <SelectValue placeholder="Р’С‹Р±РµСЂРёС‚Рµ СѓСЃР»СѓРіСѓ" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="renovation">Ремонт квартиры</SelectItem>
-            <SelectItem value="design">Дизайн интерьера</SelectItem>
-            <SelectItem value="commercial">Коммерческое помещение</SelectItem>
-            <SelectItem value="other">Другое</SelectItem>
+            <SelectItem value="renovation">Р РµРјРѕРЅС‚ РєРІР°СЂС‚РёСЂС‹</SelectItem>
+            <SelectItem value="design">Р”РёР·Р°Р№РЅ РёРЅС‚РµСЂСЊРµСЂР°</SelectItem>
+            <SelectItem value="commercial">РљРѕРјРјРµСЂС‡РµСЃРєРѕРµ РїРѕРјРµС‰РµРЅРёРµ</SelectItem>
+            <SelectItem value="other">Р”СЂСѓРіРѕРµ</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="budget_range">Бюджет проекта</Label>
+        <Label htmlFor="budget_range">Р‘СЋРґР¶РµС‚ РїСЂРѕРµРєС‚Р°</Label>
         <Select name="budget_range" disabled={isLoading}>
           <SelectTrigger>
-            <SelectValue placeholder="Выберите диапазон" />
+            <SelectValue placeholder="Р’С‹Р±РµСЂРёС‚Рµ РґРёР°РїР°Р·РѕРЅ" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="up_to_500k">До 500 000 ₽</SelectItem>
-            <SelectItem value="500k_1m">500 000 - 1 000 000 ₽</SelectItem>
-            <SelectItem value="1m_2m">1 000 000 - 2 000 000 ₽</SelectItem>
-            <SelectItem value="2m_plus">Более 2 000 000 ₽</SelectItem>
+            <SelectItem value="up_to_500k">Р”Рѕ 500 000 в‚Ѕ</SelectItem>
+            <SelectItem value="500k_1m">500 000 - 1 000 000 в‚Ѕ</SelectItem>
+            <SelectItem value="1m_2m">1 000 000 - 2 000 000 в‚Ѕ</SelectItem>
+            <SelectItem value="2m_plus">Р‘РѕР»РµРµ 2 000 000 в‚Ѕ</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="message">
-          Сообщение <span className="text-destructive">*</span>
+          РЎРѕРѕР±С‰РµРЅРёРµ <span className="text-destructive">*</span>
         </Label>
         <Textarea
           id="message"
           name="message"
-          placeholder="Расскажите подробнее о вашем проекте..."
+          placeholder="Р Р°СЃСЃРєР°Р¶РёС‚Рµ РїРѕРґСЂРѕР±РЅРµРµ Рѕ РІР°С€РµРј РїСЂРѕРµРєС‚Рµ..."
           rows={5}
           required
           disabled={isLoading}
@@ -157,7 +124,7 @@ export function ContactForm() {
 
       {isSuccess && (
         <div className="p-4 bg-green-500/10 text-green-700 dark:text-green-400 text-sm rounded-lg border border-green-500/20">
-          Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.
+          РЎРїР°СЃРёР±Рѕ! Р’Р°С€Р° Р·Р°СЏРІРєР° РѕС‚РїСЂР°РІР»РµРЅР°. РњС‹ СЃРІСЏР¶РµРјСЃСЏ СЃ РІР°РјРё РІ Р±Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ.
         </div>
       )}
 
@@ -165,15 +132,15 @@ export function ContactForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Отправка...
+            РћС‚РїСЂР°РІРєР°...
           </>
         ) : (
-          "Отправить заявку"
+          "РћС‚РїСЂР°РІРёС‚СЊ Р·Р°СЏРІРєСѓ"
         )}
       </Button>
 
       <p className="text-xs text-muted-foreground text-center">
-        Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
+        РќР°Р¶РёРјР°СЏ РєРЅРѕРїРєСѓ, РІС‹ СЃРѕРіР»Р°С€Р°РµС‚РµСЃСЊ СЃ РїРѕР»РёС‚РёРєРѕР№ РѕР±СЂР°Р±РѕС‚РєРё РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С…
       </p>
     </form>
   )

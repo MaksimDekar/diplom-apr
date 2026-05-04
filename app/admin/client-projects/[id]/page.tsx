@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Upload, Loader2, CheckCircle, Clock, Circle, Image, Video } from "lucide-react"
+import { ArrowLeft, Loader2, CheckCircle, Clock, Circle, Image, Video } from "lucide-react"
 
 type Stage = {
     id: string
@@ -146,27 +146,12 @@ export default function ClientProjectDetailPage() {
 
             if (insertError) throw insertError
 
-            // Уведомление в Telegram
-            try {
-                const stage = stages.find(s => s.id === selectedStage)
-                await fetch("/api/telegram", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        formType: "progress_update",
-                        projectTitle: project?.title,
-                        stageName: stage?.title,
-                        clientName: project?.profiles?.full_name || project?.profiles?.email,
-                    }),
-                })
-            } catch { /* Telegram не критичен */ }
-
             setCaption("")
             setSuccess(true)
             setTimeout(() => setSuccess(false), 3000)
             loadData()
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : "Ошибка загрузки файла")
+            setError(err instanceof Error ? err.message : "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё С„Р°Р№Р»Р°")
         } finally {
             setUploading(false)
             e.target.value = ""
@@ -185,18 +170,18 @@ export default function ClientProjectDetailPage() {
         <div className="flex min-h-screen">
             <main className="flex-1 p-8 ml-64">
                 <div className="max-w-5xl mx-auto">
-                    {/* Шапка */}
+                    {/* РЁР°РїРєР° */}
                     <div className="flex items-center gap-4 mb-8">
                         <Button asChild variant="outline" size="sm">
                             <Link href="/admin/client-projects">
                                 <ArrowLeft className="mr-2 h-4 w-4" />
-                                Назад
+                                РќР°Р·Р°Рґ
                             </Link>
                         </Button>
                         <div className="flex-1">
                             <h1 className="font-serif text-3xl font-bold">{project.title}</h1>
                             <p className="text-muted-foreground">
-                                {project.profiles?.full_name || project.profiles?.email} · {project.address}
+                                {project.profiles?.full_name || project.profiles?.email} В· {project.address}
                             </p>
                         </div>
                         <Select value={project.status} onValueChange={updateProjectStatus}>
@@ -204,19 +189,19 @@ export default function ClientProjectDetailPage() {
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="active">В работе</SelectItem>
-                                <SelectItem value="paused">Приостановлен</SelectItem>
-                                <SelectItem value="completed">Завершён</SelectItem>
+                                <SelectItem value="active">Р’ СЂР°Р±РѕС‚Рµ</SelectItem>
+                                <SelectItem value="paused">РџСЂРёРѕСЃС‚Р°РЅРѕРІР»РµРЅ</SelectItem>
+                                <SelectItem value="completed">Р—Р°РІРµСЂС€С‘РЅ</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Этапы */}
+                        {/* Р­С‚Р°РїС‹ */}
                         <div className="lg:col-span-1">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="text-base">Этапы ремонта</CardTitle>
+                                    <CardTitle className="text-base">Р­С‚Р°РїС‹ СЂРµРјРѕРЅС‚Р°</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-2">
                                     {stages.map((stage) => (
@@ -236,9 +221,9 @@ export default function ClientProjectDetailPage() {
                                                     <span />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="pending">Ожидает</SelectItem>
-                                                    <SelectItem value="in_progress">В работе</SelectItem>
-                                                    <SelectItem value="completed">Завершён</SelectItem>
+                                                    <SelectItem value="pending">РћР¶РёРґР°РµС‚</SelectItem>
+                                                    <SelectItem value="in_progress">Р’ СЂР°Р±РѕС‚Рµ</SelectItem>
+                                                    <SelectItem value="completed">Р—Р°РІРµСЂС€С‘РЅ</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -247,19 +232,18 @@ export default function ClientProjectDetailPage() {
                             </Card>
                         </div>
 
-                        {/* Загрузка медиа и галерея */}
+                        {/* Р—Р°РіСЂСѓР·РєР° РјРµРґРёР° Рё РіР°Р»РµСЂРµСЏ */}
                         <div className="lg:col-span-2 space-y-6">
-                            {/* Форма загрузки */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="text-base">Загрузить фото/видео</CardTitle>
+                                    <CardTitle className="text-base">Р—Р°РіСЂСѓР·РёС‚СЊ С„РѕС‚Рѕ/РІРёРґРµРѕ</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-2">
-                                        <Label>Этап</Label>
+                                        <Label>Р­С‚Р°Рї</Label>
                                         <Select value={selectedStage} onValueChange={setSelectedStage}>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Выберите этап" />
+                                                <SelectValue placeholder="Р’С‹Р±РµСЂРёС‚Рµ СЌС‚Р°Рї" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {stages.map((s) => (
@@ -270,9 +254,9 @@ export default function ClientProjectDetailPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Подпись (необязательно)</Label>
+                                        <Label>РџРѕРґРїРёСЃСЊ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)</Label>
                                         <Textarea
-                                            placeholder="Описание фото..."
+                                            placeholder="РћРїРёСЃР°РЅРёРµ С„РѕС‚Рѕ..."
                                             rows={2}
                                             value={caption}
                                             onChange={(e) => setCaption(e.target.value)}
@@ -280,7 +264,7 @@ export default function ClientProjectDetailPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label>Файл (фото или видео)</Label>
+                                        <Label>Р¤Р°Р№Р» (С„РѕС‚Рѕ РёР»Рё РІРёРґРµРѕ)</Label>
                                         <Input
                                             type="file"
                                             accept="image/*,video/*"
@@ -292,17 +276,16 @@ export default function ClientProjectDetailPage() {
                                     {uploading && (
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <Loader2 className="h-4 w-4 animate-spin" />
-                                            Загрузка...
+                                            Р—Р°РіСЂСѓР·РєР°...
                                         </div>
                                     )}
                                     {error && <p className="text-sm text-destructive">{error}</p>}
                                     {success && (
-                                        <p className="text-sm text-green-600">Файл успешно загружен!</p>
+                                        <p className="text-sm text-green-600">Р¤Р°Р№Р» СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅ!</p>
                                     )}
                                 </CardContent>
                             </Card>
 
-                            {/* Галерея по этапам */}
                             {stages.map((stage) => {
                                 const stageFiles = stageMedia(stage.id)
                                 if (stageFiles.length === 0) return null
@@ -312,7 +295,7 @@ export default function ClientProjectDetailPage() {
                                             <div className="flex items-center gap-2">
                                                 {stageStatusIcon[stage.status]}
                                                 <CardTitle className="text-base">{stage.title}</CardTitle>
-                                                <Badge variant="secondary">{stageFiles.length} файлов</Badge>
+                                                <Badge variant="secondary">{stageFiles.length} С„Р°Р№Р»РѕРІ</Badge>
                                             </div>
                                         </CardHeader>
                                         <CardContent>
