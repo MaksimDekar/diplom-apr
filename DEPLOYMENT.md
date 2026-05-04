@@ -146,3 +146,18 @@ CNAME www   cname.vercel-dns.com
 ---
 
 Проект готов к использованию! При возникновении вопросов обращайтесь к документации Next.js и Supabase.
+## Netlify deployment
+
+Recommended hosting for this project is Netlify because the app uses Next.js server features, API routes, and Supabase-backed auth.
+
+Repository files added for Netlify:
+- `netlify.toml`
+- `.npmrc`
+- `.env.example`
+
+Before the first production deploy, add these environment variables in Netlify:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`

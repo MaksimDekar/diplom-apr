@@ -112,3 +112,15 @@
 - Email: apr.info@bk.ru
 - Телефон: +7 (905) 094-32-16
 - Адрес: Новосибирск, ул. Бориса Богаткова, 210/1, офис 810, 8 этаж
+## Netlify deployment
+
+This repository is prepared for Netlify deployment.
+
+Required environment variables:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+
+Use `.env.example` as the source of truth when filling Netlify environment variables.
