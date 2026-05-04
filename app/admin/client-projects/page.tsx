@@ -3,6 +3,7 @@ import Link from "next/link"
 import { createClient } from "@supabase/supabase-js"
 import { createClient as createServerClient } from "@/lib/supabase/server"
 import { AdminNav } from "@/components/admin/admin-nav"
+import { DeleteClientProjectButton } from "@/components/admin/delete-client-project-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -80,7 +81,7 @@ export default async function ClientProjectsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h1 className="font-serif text-3xl font-bold mb-2">Проекты клиентов</h1>
+              <h1 className="mb-2 font-serif text-3xl font-bold">Проекты клиентов</h1>
               <p className="text-muted-foreground">Управление трекером ремонта</p>
             </div>
             <Button asChild>
@@ -113,7 +114,7 @@ export default async function ClientProjectsPage() {
                 return (
                   <Card key={project.id} className="transition-colors hover:border-primary/50">
                     <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between gap-4">
                         <div>
                           <CardTitle className="text-lg">{project.title}</CardTitle>
                           <p className="mt-1 text-sm text-muted-foreground">{project.address}</p>
@@ -125,7 +126,7 @@ export default async function ClientProjectsPage() {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           {project.property_type && <span>{project.property_type}</span>}
                           {project.property_area && <span>{project.property_area} м²</span>}
@@ -142,9 +143,16 @@ export default async function ClientProjectsPage() {
                             </div>
                           )}
                         </div>
-                        <Button asChild size="sm" variant="outline">
-                          <Link href={`/admin/client-projects/${project.id}`}>Управление</Link>
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={`/admin/client-projects/${project.id}`}>Управление</Link>
+                          </Button>
+                          <DeleteClientProjectButton
+                            projectId={project.id}
+                            projectTitle={project.title}
+                            variant="outline"
+                          />
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

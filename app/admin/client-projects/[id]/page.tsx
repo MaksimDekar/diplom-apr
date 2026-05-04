@@ -5,6 +5,7 @@ import { useParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { AdminNav } from "@/components/admin/admin-nav"
+import { DeleteClientProjectButton } from "@/components/admin/delete-client-project-button"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -247,6 +248,11 @@ export default function ClientProjectDetailPage() {
                 <SelectItem value="completed">Завершён</SelectItem>
               </SelectContent>
             </Select>
+            <DeleteClientProjectButton
+              projectId={project.id}
+              projectTitle={project.title}
+              redirectTo="/admin/client-projects"
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
