@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import { AdminNav } from "@/components/admin/admin-nav"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -168,6 +169,7 @@ export default function ClientProjectDetailPage() {
 
     return (
         <div className="flex min-h-screen">
+            <AdminNav />
             <main className="flex-1 p-8 ml-64">
                 <div className="max-w-5xl mx-auto">
                     {/* РЁР°РїРєР° */}

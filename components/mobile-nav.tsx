@@ -24,55 +24,32 @@ export function MobileNav() {
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-lg font-bold leading-none">АбсолютПрофРемонт</span>
-              <span className="text-xs text-muted-foreground">Строим с 2014 года</span>
+              <span className="text-xs text-muted-foreground">Строим с 2008 года</span>
             </div>
           </div>
 
           <nav className="flex flex-col gap-2">
-            <Link
-              href="/services"
-              className="text-base font-medium transition-colors hover:text-primary py-2"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/services" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
               Услуги
             </Link>
-            <Link
-              href="/portfolio"
-              className="text-base font-medium transition-colors hover:text-primary py-2"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/portfolio" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
               Портфолио
             </Link>
-            <Link
-              href="/about"
-              className="text-base font-medium transition-colors hover:text-primary py-2"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/about" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
               О компании
             </Link>
-            <Link
-              href="/reviews"
-              className="text-base font-medium transition-colors hover:text-primary py-2"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/reviews" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
               Отзывы
             </Link>
-            <Link
-              href="/contacts"
-              className="text-base font-medium transition-colors hover:text-primary py-2"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/contacts" className="text-base font-medium transition-colors hover:text-primary py-2" onClick={() => setOpen(false)}>
               Контакты
             </Link>
           </nav>
 
           <div className="pt-6 border-t">
-            <a
-              href="tel:+74951234567"
-              className="flex items-center gap-2 text-base font-semibold hover:text-primary transition-colors mb-4"
-            >
+            <a href="tel:+79050943216" className="flex items-center gap-2 text-base font-semibold hover:text-primary transition-colors mb-4">
               <Phone className="h-5 w-5" />
-              +7 (495) 123-45-67
+              +7 (905) 094-32-16
             </a>
             <Button asChild className="w-full" onClick={() => setOpen(false)}>
               <Link href="/contacts#consultation">Бесплатная консультация</Link>
