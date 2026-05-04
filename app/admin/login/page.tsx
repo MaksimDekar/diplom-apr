@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,15 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error")
+
+    if (errorParam === "access_denied") {
+      setError("У этого аккаунта нет доступа к админ-панели. Войдите под администратором.")
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,15 +33,30 @@ export default function AdminLoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
-      if (error) throw error
-      router.push("/admin")
-      router.refresh()
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Произошла ошибка входа")
+
+      if (signInError) throw signInError
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single()
+
+      if (profileError) throw profileError
+
+      if (profile?.role !== "admin") {
+        await supabase.auth.signOut()
+        setError("У этого аккаунта нет прав администратора. Используйте админский email.")
+        return
+      }
+
+      window.location.href = "/admin"
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Произошла ошибка входа")
     } finally {
       setIsLoading(false)
     }
@@ -44,8 +67,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground font-serif text-xl font-bold">
+            <div className="mb-4 flex justify-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary font-serif text-xl font-bold text-primary-foreground">
                 АПР
               </div>
             </div>

@@ -53,7 +53,8 @@ export async function updateSession(request: NextRequest) {
     const role = await getAdminRole(user.id)
     if (role !== "admin") {
       const url = request.nextUrl.clone()
-      url.pathname = "/"
+      url.pathname = "/admin/login"
+      url.searchParams.set("error", "access_denied")
       return NextResponse.redirect(url)
     }
   }
