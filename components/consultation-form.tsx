@@ -33,14 +33,11 @@ export function ConsultationForm() {
 
     try {
       const supabase = createClient()
-
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
-      const { error: insertError } = await supabase
-        .from("consultation_requests")
-        .insert([{ ...data, user_id: user?.id ?? null }])
+      const { error: insertError } = await supabase.from("consultation_requests").insert([{ ...data, user_id: user?.id ?? null }])
 
       if (insertError) throw insertError
 
@@ -48,7 +45,7 @@ export function ConsultationForm() {
       ;(e.target as HTMLFormElement).reset()
       setTimeout(() => setIsSuccess(false), 5000)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РѕС‚РїСЂР°РІРєРµ С„РѕСЂРјС‹")
+      setError(err instanceof Error ? err.message : "Произошла ошибка при отправке формы")
     } finally {
       setIsLoading(false)
     }
@@ -58,15 +55,15 @@ export function ConsultationForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="cons_full_name">
-          Р’Р°С€Рµ РёРјСЏ <span className="text-destructive">*</span>
+          Ваше имя <span className="text-destructive">*</span>
         </Label>
-        <Input id="cons_full_name" name="full_name" placeholder="РРІР°РЅ РРІР°РЅРѕРІ" required disabled={isLoading} />
+        <Input id="cons_full_name" name="full_name" placeholder="Иван Иванов" required disabled={isLoading} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="cons_phone">
-            РўРµР»РµС„РѕРЅ <span className="text-destructive">*</span>
+            Телефон <span className="text-destructive">*</span>
           </Label>
           <Input id="cons_phone" name="phone" type="tel" placeholder="+7 (999) 123-45-67" required disabled={isLoading} />
         </div>
@@ -78,32 +75,32 @@ export function ConsultationForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="property_type">РўРёРї РѕР±СЉРµРєС‚Р°</Label>
-          <Input id="property_type" name="property_type" placeholder="РљРІР°СЂС‚РёСЂР°, РѕС„РёСЃ..." disabled={isLoading} />
+          <Label htmlFor="property_type">Тип объекта</Label>
+          <Input id="property_type" name="property_type" placeholder="Квартира, офис..." disabled={isLoading} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="property_area">РџР»РѕС‰Р°РґСЊ (РјВІ)</Label>
+          <Label htmlFor="property_area">Площадь (м²)</Label>
           <Input id="property_area" name="property_area" type="number" step="0.1" placeholder="65" disabled={isLoading} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="preferred_date">РџСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅР°СЏ РґР°С‚Р°</Label>
+          <Label htmlFor="preferred_date">Предпочтительная дата</Label>
           <Input id="preferred_date" name="preferred_date" type="date" disabled={isLoading} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="preferred_time">РџСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅРѕРµ РІСЂРµРјСЏ</Label>
+          <Label htmlFor="preferred_time">Предпочтительное время</Label>
           <Input id="preferred_time" name="preferred_time" type="time" placeholder="14:00" disabled={isLoading} />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="cons_message">РљРѕРјРјРµРЅС‚Р°СЂРёР№</Label>
+        <Label htmlFor="cons_message">Комментарий</Label>
         <Textarea
           id="cons_message"
           name="message"
-          placeholder="Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РІР°С€РµРј РїСЂРѕРµРєС‚Рµ..."
+          placeholder="Дополнительная информация о вашем проекте..."
           rows={4}
           disabled={isLoading}
         />
@@ -117,7 +114,7 @@ export function ConsultationForm() {
 
       {isSuccess && (
         <div className="p-4 bg-green-500/10 text-green-700 dark:text-green-400 text-sm rounded-lg border border-green-500/20">
-          РЎРїР°СЃРёР±Рѕ! Р—Р°СЏРІРєР° РЅР° РєРѕРЅСЃСѓР»СЊС‚Р°С†РёСЋ РѕС‚РїСЂР°РІР»РµРЅР°. РњС‹ СЃРІСЏР¶РµРјСЃСЏ СЃ РІР°РјРё РІ СѓРєР°Р·Р°РЅРЅРѕРµ РІСЂРµРјСЏ.
+          Спасибо! Заявка на консультацию отправлена. Мы свяжемся с вами в указанное время.
         </div>
       )}
 
@@ -125,15 +122,15 @@ export function ConsultationForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            РћС‚РїСЂР°РІРєР°...
+            Отправка...
           </>
         ) : (
-          "Р—Р°РєР°Р·Р°С‚СЊ РєРѕРЅСЃСѓР»СЊС‚Р°С†РёСЋ"
+          "Заказать консультацию"
         )}
       </Button>
 
       <p className="text-xs text-muted-foreground text-center">
-        РќР°Р¶РёРјР°СЏ РєРЅРѕРїРєСѓ, РІС‹ СЃРѕРіР»Р°С€Р°РµС‚РµСЃСЊ СЃ РїРѕР»РёС‚РёРєРѕР№ РѕР±СЂР°Р±РѕС‚РєРё РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… РґР°РЅРЅС‹С…
+        Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
       </p>
     </form>
   )
