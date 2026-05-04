@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { LogoutButton } from "@/components/logout-button"
 import { EditProfileForm } from "@/components/edit-profile-form"
+import { ProjectMediaGallery } from "@/components/dashboard/project-media-gallery"
 import {
-    CheckCircle, Clock, Circle, Image as ImageIcon, Video,
+    CheckCircle, Clock, Circle,
     Phone, Mail, MessageSquare, CalendarDays, HardHat, Shield
 } from "lucide-react"
 
@@ -222,29 +223,7 @@ export default async function DashboardPage() {
                                                                 Последнее обновление: {new Date(latestStageUpdate.created_at).toLocaleString("ru-RU")}
                                                             </p>
                                                         )}
-                                                        {stageMedia.length > 0 && (
-                                                            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                                                                {stageMedia.map((file) => (
-                                                                    <div key={file.id} className="space-y-1">
-                                                                        {file.file_type === "photo" ? (
-                                                                            <a href={file.file_url} target="_blank" rel="noopener noreferrer">
-                                                                                <div className="relative">
-                                                                                    <img src={file.file_url} alt={file.caption || ""} className="w-full h-20 object-cover rounded-lg hover:opacity-90 transition-opacity" />
-                                                                                    <div className="absolute top-1 left-1"><ImageIcon className="h-3 w-3 text-white drop-shadow" /></div>
-                                                                                </div>
-                                                                            </a>
-                                                                        ) : (
-                                                                            <a href={file.file_url} target="_blank" rel="noopener noreferrer">
-                                                                                <div className="w-full h-20 bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors">
-                                                                                    <Video className="h-6 w-6 text-muted-foreground" />
-                                                                                </div>
-                                                                            </a>
-                                                                        )}
-                                                                        {file.caption && <p className="text-xs text-muted-foreground">{file.caption}</p>}
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        )}
+                                                        {stageMedia.length > 0 && <ProjectMediaGallery items={stageMedia} />}
                                                     </div>
                                                 )
                                             })}
