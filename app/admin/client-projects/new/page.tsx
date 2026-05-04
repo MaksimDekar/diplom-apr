@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
@@ -29,6 +29,7 @@ type UserOption = {
   id: string
   full_name: string | null
   email: string | null
+  phone: string | null
 }
 
 export default function NewClientProjectPage() {
@@ -38,6 +39,7 @@ export default function NewClientProjectPage() {
   const [error, setError] = useState<string | null>(null)
   const [usersLoadError, setUsersLoadError] = useState<string | null>(null)
   const [users, setUsers] = useState<UserOption[]>([])
+  const [userSearch, setUserSearch] = useState("")
   const [stages, setStages] = useState(DEFAULT_STAGES.map((title, i) => ({ title, order_index: i })))
   const [newStage, setNewStage] = useState("")
 
@@ -74,6 +76,28 @@ export default function NewClientProjectPage() {
 
     loadUsers()
   }, [])
+
+  const filteredUsers = useMemo(() => {
+    const query = userSearch.trim().toLowerCase()
+
+    if (!query) {
+      return users
+    }
+
+    return users.filter((user) => {
+      const haystack = [user.full_name, user.email, user.phone]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+
+      return haystack.includes(query)
+    })
+  }, [userSearch, users])
+
+  const selectedUser = useMemo(
+    () => users.find((user) => user.id === form.user_id) ?? null,
+    [form.user_id, users]
+  )
 
   const addStage = () => {
     if (!newStage.trim()) return
@@ -155,10 +179,16 @@ export default function NewClientProjectPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Клиент *</Label>
+                  <Input
+                    placeholder="Найти клиента по имени, email или телефону"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    disabled={isLoadingUsers || users.length === 0}
+                  />
                   <Select
                     value={form.user_id}
                     onValueChange={(value) => setForm({ ...form, user_id: value })}
-                    disabled={isLoadingUsers || users.length === 0}
+                    disabled={isLoadingUsers || filteredUsers.length === 0}
                   >
                     <SelectTrigger>
                       <SelectValue
@@ -167,18 +197,32 @@ export default function NewClientProjectPage() {
                             ? "Загружаем клиентов..."
                             : users.length === 0
                               ? "Нет доступных клиентов"
+                              : filteredUsers.length === 0
+                                ? "По запросу никто не найден"
                               : "Выберите клиента"
                         }
                       />
                     </SelectTrigger>
                     <SelectContent>
-                      {users.map((user) => (
+                      {filteredUsers.map((user) => (
                         <SelectItem key={user.id} value={user.id}>
-                          {user.full_name || user.email || user.id}
+                          {[user.full_name, user.email, user.phone].filter(Boolean).join(" • ") || user.id}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {selectedUser && (
+                    <div className="rounded-lg border bg-muted/40 px-3 py-2 text-sm">
+                      <div className="font-medium">{selectedUser.full_name || "Без имени"}</div>
+                      {selectedUser.email && <div className="text-muted-foreground">{selectedUser.email}</div>}
+                      {selectedUser.phone && <div className="text-muted-foreground">{selectedUser.phone}</div>}
+                    </div>
+                  )}
+                  {!isLoadingUsers && users.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Найдено: {filteredUsers.length} из {users.length}
+                    </p>
+                  )}
                   {usersLoadError && <p className="text-sm text-destructive">{usersLoadError}</p>}
                 </div>
 

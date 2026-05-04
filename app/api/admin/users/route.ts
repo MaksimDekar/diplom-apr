@@ -29,7 +29,7 @@ export async function GET() {
 
   const { data, error } = await adminSupabase
     .from("profiles")
-    .select("id, full_name, email")
+    .select("id, full_name, email, phone")
     .eq("role", "user")
     .order("full_name")
 
